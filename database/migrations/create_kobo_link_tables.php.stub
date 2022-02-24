@@ -37,7 +37,7 @@ class CreateKoboLinkTables extends Migration
         Schema::create('xlsforms', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('xlsfile');
+            $table->string('xlsfile')->nullable();
             $table->text('description')->nullable();
             $table->text('media')->nullable()->comment('links to stored files that should be added as media attachments to the ODK form');
             $table->json('csv_lookups')->nullable()->comment('information to enable mysql tables or views to be converted to csv files and added as additional media attachments to the ODK form');
@@ -63,12 +63,26 @@ class CreateKoboLinkTables extends Migration
             $table->timestamps();
         });
 
+
+        /**
+         * Table to store the form questions
+         */
+        Schema::create('questions', function (Blueprint $table) {
+            $table->foreignId('team_xlsform_id')->constrained('team_xlsform');
+            $table->string("name");
+            $table->string("kuid");
+            $table->string("label");
+            $table->string("list_name");
+            $table->string("autovalue");
+            $table->timestamps();
+        });
+
         /**
          * Table to store all ODK raw submissions that get pulled from KoBoToolbox
          */
         Schema::create('submissions', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->primary();
-            $table->foreignId('team_xlsform_id')->constrained('xlsforms');
+            $table->foreignId('team_xlsform_id')->constrained('team_xlsform');
             $table->string('uuid');
             $table->timestamp('submitted_at');
             $table->string('submitted_by')->nullable();
@@ -105,5 +119,6 @@ class CreateKoboLinkTables extends Migration
         Schema::dropIfExists('xlsforms');
         Schema::dropIfExists('team_xlsforms');
         Schema::dropIfExists('submissions');
+        Schema::dropIfExists('questions');
     }
 }

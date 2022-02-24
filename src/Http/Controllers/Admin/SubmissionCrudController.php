@@ -60,36 +60,37 @@ class SubmissionCrudController extends CrudController
         CRUD::column('entries')->label('Db Entries created')->type('submission_entries')->view_namespace('kobo-link::crud.columns');
 
         CRUD::filter('xlsform')
-        ->type('select2')
-        ->label('Filter by Team form')
-        ->values(function () {
-            return TeamXlsform::get()->pluck('title', 'id')->toArray();
-        })
-        ->whenActive(function ($value) {
-            CRUD::addClause('where', 'team_xlsform_id', $value);
-        });
+            ->type('select2')
+            ->label('Filter by Team form')
+            ->values(function () {
+                return TeamXlsform::get()->pluck('title', 'id')->toArray();
+            })
+            ->whenActive(function ($value) {
+                CRUD::addClause('where', 'team_xlsform_id', $value);
+            });
 
         CRUD::filter('errors')
-        ->type('simple')
-        ->label('Show submissions with errors')
-        ->whenActive(function () {
-            CRUD::addClause('where', 'errors', '!=', null);
-        });
+            ->type('simple')
+            ->label('Show submissions with errors')
+            ->whenActive(function () {
+                CRUD::addClause('where', 'errors', '!=', null);
+            });
 
         Crud::button('reprocess')
-        ->stack('line')
-        ->view('kobo-link::crud.buttons.submissions.reprocess');
+            ->stack('line')
+            ->view('kobo-link::crud.buttons.submissions.reprocess');
     }
 
     public function setupShowOperation(): void
     {
         $this->setupListOperation();
 
-        CRUD::column('content')->type('closure')->function(/**
+        CRUD::column('content')->type('closure')->function(
+        /**
          * @throws JsonException
-         */ function ($entry) {
+         */
+        function ($entry) {
             $content = json_decode($entry->content, true, 512, JSON_THROW_ON_ERROR);
-
 
             $output = '
             <table class="table table-striped">
@@ -106,8 +107,8 @@ class SubmissionCrudController extends CrudController
 
                 $output .= '
                 <tr>
-                    <td>'.$key.'</td>
-                    <td>'.$value.'</td>
+                    <td>' . $key . '</td>
+                    <td>' . $value . '</td>
                 </tr>
                 ';
             }
@@ -152,10 +153,10 @@ class SubmissionCrudController extends CrudController
                 continue;
             }
 
-            CRUD::field('_title'.$key)->type('custom_html')->value("<h5>{$key}</h5>");
-            CRUD::field('_label'.$key)->type('submission_variable')->value((string) $key)->fake(true);
+            CRUD::field('_title' . $key)->type('custom_html')->value("<h5>{$key}</h5>");
+            CRUD::field('_label' . $key)->type('submission_variable')->value((string) $key)->fake(true);
             CRUD::field($key)->type('submission_value')->value((string) $value)->fake(true);
-            CRUD::field('_end'.$key)->type('custom_html')->value('<hr/>');
+            CRUD::field('_end' . $key)->type('custom_html')->value('<hr/>');
         }
     }
 
@@ -173,7 +174,7 @@ class SubmissionCrudController extends CrudController
         foreach ($request as $key => $value) {
 
             //handle value updates
-            if (! Str::startsWith($key, '_label')) {
+            if (!Str::startsWith($key, '_label')) {
                 $content[$key] = $value;
             }
         }

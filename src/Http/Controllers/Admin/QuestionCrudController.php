@@ -18,7 +18,7 @@ use Stats4sd\KoboLink\Exports\FormSubmissionsExport;
 use Stats4sd\KoboLink\Jobs\ArchiveKoboForm;
 use Stats4sd\KoboLink\Jobs\DeployFormToKobo;
 use Stats4sd\KoboLink\Jobs\GetDataFromKobo;
-use Stats4sd\KoboLink\Models\Team;
+use Stats4sd\KoboLink\Models\Question;
 use Stats4sd\KoboLink\Models\TeamXlsform;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
@@ -27,7 +27,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
  * @package \Stats4SD\KoboLink\Http\Controllers\Admin
  * @property-read CrudPanel $crud
  */
-class TeamXlsformCrudController extends CrudController
+class QuestionCrudController extends CrudController
 {
     use ListOperation;
     use UpdateOperation;
@@ -38,9 +38,9 @@ class TeamXlsformCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(TeamXlsform::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/teamxlsform');
-        CRUD::setEntityNameStrings('Team XLS Form', 'Team XLS Form');
+        CRUD::setModel(Question::class);
+        CRUD::setRoute(config('backpack.base.route_prefix') . '/question');
+        CRUD::setEntityNameStrings('Form Questions', 'Form Questions');
     }
 
     /**
@@ -51,26 +51,11 @@ class TeamXlsformCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        if (Team::count() > 1) {
-            CRUD::column('title');
-        }
-
-        CRUD::column('xlsform')->type('relationship')->attribute('title');
-
-        if (Team::count() > 1) {
-            CRUD::column('team')->type('relationship')->attribute('name');
-        }
-
-        CRUD::column('kobo_id')->label('Kobo Form ID')->wrapper([
-            'href' => function ($crud, $column, $entry) {
-                if ($entry->kobo_id) {
-                    return 'https://kf.kobotoolbox.org/#/forms/' . $entry->kobo_id;
-                }
-
-                return '#';
-            },
-        ]);
-        CRUD::column('is_active')->type('boolean')->label('Form active on Kobo?');
+        // CRUD::column('xlsform')->type('relationship')->attribute('title');
+        CRUD::column("name");
+        CRUD::column("label");
+        CRUD::column("list_name");
+        CRUD::column("kuid");
     }
 
     public function setupUpdateOperation(): void
@@ -99,10 +84,6 @@ class TeamXlsformCrudController extends CrudController
         Crud::button('archive')
             ->stack('line')
             ->view('kobo-link::crud.buttons.xlsforms.archive');
-
-        Crud::button('syncq')
-            ->stack('line')
-            ->view('kobo-link::crud.buttons.xlsforms.syncq');
 
         $form = $this->crud->getCurrentEntry();
 

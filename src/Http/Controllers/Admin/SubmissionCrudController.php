@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Stats4sd\KoboLink\Http\Controllers\Admin;
 
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -16,6 +15,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Str;
 use JsonException;
 use Stats4sd\KoboLink\Jobs\ProcessSubmission;
+use Stats4sd\KoboLink\Models\Question;
 use Stats4sd\KoboLink\Models\Submission;
 use Stats4sd\KoboLink\Models\TeamXlsform;
 
@@ -29,7 +29,6 @@ class SubmissionCrudController extends CrudController
     use ListOperation;
     use ShowOperation;
     use UpdateOperation;
-
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -86,37 +85,49 @@ class SubmissionCrudController extends CrudController
         $this->setupListOperation();
 
         CRUD::column('content')->type('closure')->function(
-        /**
-         * @throws JsonException
-         */
-        function ($entry) {
-            $content = json_decode($entry->content, true, 512, JSON_THROW_ON_ERROR);
 
-            $output = '
+            /**
+             * @throws JsonException
+             */
+            function ($entry) {
+                $content = json_decode($entry->content, true, 512, JSON_THROW_ON_ERROR);
+                //where('team_xlsform_id', $entry->team_xlsform_id)->get
+                $translations = array();
+                $questions = Question::all(['label', 'name']);
+
+                foreach ($questions as $question) {
+                    $translations[$question->name] = $question->label;
+                }
+
+                $output = '
             <table class="table table-striped">
             <tr>
             <th>Variable Name</th>
             <th>Value</th>
-            </tr>
             ';
 
-            foreach ($content as $key => $value) {
-                if (is_array($value)) {
-                    $value = json_encode($value, JSON_THROW_ON_ERROR);
-                }
+                foreach ($content as $key => $value) {
+                    $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
 
-                $output .= '
+                    if (is_array($value)) {
+                        $value = json_encode($value, JSON_THROW_ON_ERROR);
+                    } else {
+                        $value = isset($translations[$value]) && !empty($translations[$value]) ? $translations[$value] : $value;
+                    }
+
+                    $output .= '
                 <tr>
-                    <td>' . $key . '</td>
+                    <td>' . ucwords(\str_replace('_', ' ', $label)) . '</td>
                     <td>' . $value . '</td>
                 </tr>
                 ';
+                }
+
+                $output .= '</table>';
+
+                return $output;
             }
-
-            $output .= '</table>';
-
-            return $output;
-        });
+        );
     }
 
     /**
@@ -147,7 +158,6 @@ class SubmissionCrudController extends CrudController
                 $value = json_encode($value, JSON_THROW_ON_ERROR);
             }
 
-
             // Do not allow immutable variables to be edited;
             if (in_array($key, $immutable, true) || Str::startsWith($key, '_')) {
                 continue;
@@ -163,7 +173,7 @@ class SubmissionCrudController extends CrudController
     /** Totally override default update functionality
      * @throws JsonException
      */
-    public function update(): Redirector|Application|RedirectResponse
+    public function update(): Redirector | Application | RedirectResponse
     {
         $submission = CRUD::getCurrentEntry();
 

@@ -62,18 +62,18 @@ class CreateKoboLinkTables extends Migration
             $table->boolean('processing')->default(0)->comment('Is the form currently being processed by a Kobo Job?');
             $table->timestamps();
         });
-
-
+        
         /**
          * Table to store the form questions
          */
         Schema::create('questions', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('team_xlsform_id')->constrained('team_xlsform');
             $table->string("name");
             $table->string("kuid");
-            $table->string("label");
-            $table->string("list_name");
-            $table->string("autovalue");
+            $table->text("label")->nullable();
+            $table->string("list_name")->nullable();
+            $table->string("autovalue")->nullable();
             $table->timestamps();
         });
 

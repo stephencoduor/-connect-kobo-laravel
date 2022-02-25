@@ -4,6 +4,7 @@ use Stats4sd\KoboLink\Http\Controllers\Admin\SubmissionCrudController;
 use Stats4sd\KoboLink\Http\Controllers\Admin\TeamCrudController;
 use Stats4sd\KoboLink\Http\Controllers\Admin\TeamXlsformCrudController;
 use Stats4sd\KoboLink\Http\Controllers\Admin\XlsformCrudController;
+use Stats4sd\KoboLink\Http\Controllers\Admin\QuestionCrudController;
 
 Route::group([
     'prefix' => config('backpack.base.route_prefix', 'admin'),
@@ -15,6 +16,7 @@ Route::group([
     Route::crud('xlsform', XlsformCrudController::class);
     Route::crud('submission', SubmissionCrudController::class);
     Route::crud('teamxlsform', TeamXlsformCrudController::class);
+    Route::crud('question', QuestionCrudController::class);
     Route::crud('team', TeamCrudController::class);
 
 
@@ -27,5 +29,3 @@ Route::group([
 
     Route::post('submission/{submission}/reprocess', [SubmissionCrudController::class, 'reprocessSubmission']);
 });
-
-

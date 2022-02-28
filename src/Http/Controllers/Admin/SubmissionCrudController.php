@@ -107,7 +107,13 @@ class SubmissionCrudController extends CrudController
             ';
 
                 foreach ($content as $key => $value) {
-                    $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
+                    if (strpos($key, '/') !== 0) {
+                        $gs = explode('/', $key);
+                        $key = $gs[1] ?? $gs[0];
+                        $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
+                    } else {
+                        $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
+                    }
 
                     if (is_array($value)) {
                         $value = json_encode($value, JSON_THROW_ON_ERROR);

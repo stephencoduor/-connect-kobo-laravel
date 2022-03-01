@@ -29,7 +29,7 @@ class TeamXlsform extends \Illuminate\Database\Eloquent\Model
 
     public function getTitleAttribute(): string
     {
-        return $this->team &&  Team::count() > 1 ? $this->team->name . ' - ' . $this->xlsform->title : $this->xlsform->title;
+        return $this->team && Team::count() > 1 ? $this->team->name . ' - ' . $this->xlsform->title : $this->xlsform->title;
     }
 
     public function getRecordsAttribute(): int
@@ -63,7 +63,7 @@ class TeamXlsform extends \Illuminate\Database\Eloquent\Model
         return $this->hasMany(Question::class);
     }
 
-    function formattedQuestions(): array
+    public function formattedQuestions(): array
     {
         $formattedQuestions = [];
         $this->questions->map(function ($question) {

@@ -92,7 +92,7 @@ class SubmissionCrudController extends CrudController
             function ($entry) {
                 $content = json_decode($entry->content, true, 512, JSON_THROW_ON_ERROR);
                 //where('team_xlsform_id', $entry->team_xlsform_id)->get
-                $translations = array();
+                $translations = [];
                 $questions = Question::all(['label', 'name']);
 
                 foreach ($questions as $question) {
@@ -110,15 +110,15 @@ class SubmissionCrudController extends CrudController
                     if (strpos($key, '/') !== 0) {
                         $gs = explode('/', $key);
                         $key = $gs[1] ?? $gs[0];
-                        $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
+                        $label = isset($translations[$key]) && ! empty($translations[$key]) ? $translations[$key] : $key;
                     } else {
-                        $label = isset($translations[$key]) && !empty($translations[$key]) ? $translations[$key] : $key;
+                        $label = isset($translations[$key]) && ! empty($translations[$key]) ? $translations[$key] : $key;
                     }
 
                     if (is_array($value)) {
                         $value = json_encode($value, JSON_THROW_ON_ERROR);
                     } else {
-                        $value = isset($translations[$value]) && !empty($translations[$value]) ? $translations[$value] : $value;
+                        $value = isset($translations[$value]) && ! empty($translations[$value]) ? $translations[$value] : $value;
                     }
 
                     $output .= '
@@ -190,7 +190,7 @@ class SubmissionCrudController extends CrudController
         foreach ($request as $key => $value) {
 
             //handle value updates
-            if (!Str::startsWith($key, '_label')) {
+            if (! Str::startsWith($key, '_label')) {
                 $content[$key] = $value;
             }
         }

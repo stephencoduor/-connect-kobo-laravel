@@ -22,7 +22,7 @@ Platforms built with this package can help with the following scenarios:
 You can install the package via composer:
 
 ```bash
-composer require stats4sd/laravel-kobo-link
+composer require stephencoduor/laravel-kobo-connect
 ```
 
 You can publish and run the migrations with:

@@ -1,17 +1,17 @@
 {
-    "name": "osenco/laravel-kobo-link",
+    "name": "stephencoduor/laravel-kobo-connect",
     "description": "Manage KoboToolBox from your Laravel Project",
     "keywords": [
         "stats4sd",
         "laravel",
         "laravel-kobo-link"
     ],
-    "homepage": "https://github.com/stats4sd/laravel-kobo-link",
+    "homepage": "https://github.com/stephencoduor/connect-kobo-laravel",
     "license": "MIT",
     "authors": [
         {
-            "name": "Dave Mills",
-            "email": "d.e.mills@stats4sd.org",
+            "name": "Stephen Coduour",
+            "email": "stephencoduor@gmail.com",
             "role": "Developer"
         }
     ],
